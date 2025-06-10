@@ -16,6 +16,13 @@ spec:
         role: master
         tier: backend
     spec:
+      initContainers:
+      - name: init-date
+        image: busybox
+        command: ['sh', '-c', 'date > /data/init-date.txt']
+        volumeMounts:
+        - name: redis-data
+          mountPath: /data
       containers:
       - name: master
         image: redis
@@ -25,3 +32,10 @@ spec:
             memory: 100Mi
         ports:
         - containerPort: 6379
+        volumeMounts:
+        - name: redis-data
+          mountPath: /data
+      volumes:
+      - name: redis-data
+        persistentVolumeClaim:
+          claimName: redis-data-pvc
